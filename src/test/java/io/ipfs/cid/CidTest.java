@@ -2,19 +2,24 @@ package io.ipfs.cid;
 
 import org.junit.*;
 import io.ipfs.multibase.*;
+
+import java.io.*;
 import java.util.*;
 
 public class CidTest {
 
     @Test
-    public void base58Test() {
-        List<String> examples = Arrays.asList("QmPZ9gcCEpqKTo6aq61g2nXGUhM4iCL3ewB6LDXZCtioEB",
-                "QmatmE9msSfkKxoffpHwNLNKgwZG8eT9Bud6YoPab52vpy");
+    public void stringTest() throws IOException {
+        List<String> examples = Arrays.asList(
+                "QmPZ9gcCEpqKTo6aq61g2nXGUhM4iCL3ewB6LDXZCtioEB",
+                "QmatmE9msSfkKxoffpHwNLNKgwZG8eT9Bud6YoPab52vpy",
+                "zdpuAyvkgEDQm9TenwGkd5eNaosSxjgEYd8QatfPetgB1CdEZ"
+        );
         for (String example: examples) {
-            byte[] output = Base58.decode(example);
-            String encoded = Base58.encode(output);
-            if (!encoded.equals(encoded))
-                throw new IllegalStateException("Incorrect base58! " + example + " => " + encoded);
+            Cid cid = Cid.decode(example);
+            String encoded = cid.toString();
+            if (!encoded.equals(example))
+                throw new IllegalStateException("Incorrect cid string! " + example + " => " + encoded);
         }
     }
 }

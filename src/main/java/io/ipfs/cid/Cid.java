@@ -63,6 +63,16 @@ public class Cid {
     }
 
     @Override
+    public String toString() {
+        if (version == 0) {
+            return hash.toString();
+        } else if (version == 1) {
+            return Multibase.encode(Multibase.Base.Base58BTC, toBytesV1());
+        }
+        throw new IllegalStateException("Unknown Cid version: " + version);
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
