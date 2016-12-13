@@ -1,12 +1,32 @@
 # java-cid
 
 [![](https://img.shields.io/badge/made%20by-Protocol%20Labs-blue.svg?style=flat-square)](http://ipn.io)
-[![](https://img.shields.io/badge/project-ipld-blue.svg?style=flat-square)](http://github.com/ipld/ipld)
+[![](https://img.shields.io/badge/project-IPLD-blue.svg?style=flat-square)](http://github.com/ipld/ipld)
 [![](https://img.shields.io/badge/freenode-%23ipfs-blue.svg?style=flat-square)](http://webchat.freenode.net/?channels=%23ipfs)
 
 > A Java implementation of Content Id
 
 This is the [cid](https://github.com/ipld/cid) implementation in Java.
+
+## Table of Contents
+
+- [Install](#install)
+- [Usage](#usage)
+- [Dependency](#dependency)
+- [Testing](#testing)
+  - [Ant](#ant)
+  - [Maven](#maven)
+- [Building](#building)
+  - [Ant](#ant-1)
+  - [Maven](#maven-1)
+- [Releasing](#releasing)
+- [Maintainers](#maintainers)
+- [Contribute](#contribute)
+- [License](#license)
+
+## Install
+
+Simply clone this repo.
 
 ## Usage
 
@@ -61,10 +81,10 @@ Captain: [@ianopolous](https://github.com/ianopolous).
 
 Contributions welcome. Please check out [the issues](https://github.com/ipld/java-cid/issues).
 
-Check out our [contributing document](https://github.com/multiformats/multiformats/blob/master/contributing.md) for more information on how we work, and about contributing in general. Please be aware that all interactions related to multiformats are subject to the IPFS [Code of Conduct](https://github.com/ipfs/community/blob/master/code-of-conduct.md).
+Check out our [contributing document](https://github.com/ipld/ipld/blob/master/contributing.md) for more information on how we work, and about contributing in general. Please be aware that all interactions related to IPLD are subject to the IPFS [Code of Conduct](https://github.com/ipfs/community/blob/master/code-of-conduct.md).
 
 Small note: If editing the Readme, please conform to the [standard-readme](https://github.com/RichardLitt/standard-readme) specification.
 
 ## License
 
-[MIT](LICENSE) © Ian Preston
+[MIT](LICENSE) © 2015 Ian Preston
