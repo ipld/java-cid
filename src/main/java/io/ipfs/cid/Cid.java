@@ -47,19 +47,27 @@ public class Cid {
         this.hash = hash;
     }
 
-    public byte[] toBytesV0() {
+    private byte[] toBytesV0() {
         return hash.toBytes();
     }
 
     private static  final int MAX_VARINT_LEN64 = 10;
 
-    public byte[] toBytesV1() {
+    private byte[] toBytesV1() {
         byte[] hashBytes = hash.toBytes();
         byte[] res = new byte[2 * MAX_VARINT_LEN64 + hashBytes.length];
         int index = putUvarint(res, 0, version);
         index = putUvarint(res, index, codec.type);
         System.arraycopy(hashBytes, 0, res, index, hashBytes.length);
         return Arrays.copyOfRange(res, 0, index + hashBytes.length);
+    }
+
+    public byte[] toBytes() {
+        if (version == 0)
+            return toBytesV0();
+        else if (version == 1)
+            return toBytesV1();
+        throw new IllegalStateException("Unknown cid version: " + version);
     }
 
     @Override
@@ -113,7 +121,7 @@ public class Cid {
         return cast(data);
     }
 
-    private static Cid cast(byte[] data) throws IOException {
+    public static Cid cast(byte[] data) throws IOException {
         if (data.length == 34 && data[0] == 0x18 && data[1] == 32)
             return buildCidV0(new Multihash(data));
 
