@@ -5,8 +5,17 @@ import io.ipfs.multihash.*;
 
 import java.io.*;
 import java.util.*;
+import java.util.stream.*;
 
-public class Cid {
+public class Cid extends Multihash {
+
+    public static final class CidEncodingException extends RuntimeException {
+
+        public CidEncodingException(String message) {
+            super(message);
+        }
+    }
+
     public enum Codec {
         Raw(0x55),
         DagProtobuf(0x70),
@@ -39,22 +48,31 @@ public class Cid {
 
     public final long version;
     public final Codec codec;
-    public final Multihash hash;
 
     public Cid(long version, Codec codec, Multihash hash) {
+        super(hash);
         this.version = version;
         this.codec = codec;
-        this.hash = hash;
+    }
+
+    public Cid(long version, Codec codec, Multihash.Type type, byte[] hash) {
+        super(type, hash);
+        this.version = version;
+        this.codec = codec;
+    }
+
+    public Cid(Multihash h) {
+        this(0, Codec.DagProtobuf, h);
     }
 
     private byte[] toBytesV0() {
-        return hash.toBytes();
+        return super.toBytes();
     }
 
-    private static  final int MAX_VARINT_LEN64 = 10;
+    private static final int MAX_VARINT_LEN64 = 10;
 
     private byte[] toBytesV1() {
-        byte[] hashBytes = hash.toBytes();
+        byte[] hashBytes = super.toBytes();
         byte[] res = new byte[2 * MAX_VARINT_LEN64 + hashBytes.length];
         int index = putUvarint(res, 0, version);
         index = putUvarint(res, index, codec.type);
@@ -73,7 +91,7 @@ public class Cid {
     @Override
     public String toString() {
         if (version == 0) {
-            return hash.toString();
+            return super.toString();
         } else if (version == 1) {
             return Multibase.encode(Multibase.Base.Base58BTC, toBytesV1());
         }
@@ -83,33 +101,38 @@ public class Cid {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (! (o instanceof Multihash)) return false;
+        if (!super.equals(o)) return false;
 
-        Cid cid = (Cid) o;
+        if (o instanceof Cid) {
+            Cid cid = (Cid) o;
 
-        if (version != cid.version) return false;
-        if (codec != cid.codec) return false;
-        return hash != null ? hash.equals(cid.hash) : cid.hash == null;
-
+            if (version != cid.version) return false;
+            return codec == cid.codec;
+        }
+        // o must be a Multihash
+        return version == 0 && super.equals(o);
     }
 
     @Override
     public int hashCode() {
-        int result = (int) (version ^ (version >>> 32));
+        int result = super.hashCode();
+        if (version == 0)
+            return result;
+        result = 31 * result + (int) (version ^ (version >>> 32));
         result = 31 * result + (codec != null ? codec.hashCode() : 0);
-        result = 31 * result + (hash != null ? hash.hashCode() : 0);
         return result;
     }
 
-    public static Cid buildCidV0(Multihash hash) {
-        return new Cid(0, Codec.DagProtobuf, hash);
+    public static Cid buildCidV0(Multihash h) {
+        return new Cid(h);
     }
 
-    public static Cid buildCidV1(Codec c, Multihash hash) {
-        return new Cid(1, c, hash);
+    public static Cid buildCidV1(Codec c, Multihash.Type type, byte[] hash) {
+        return new Cid(1, c, type, hash);
     }
 
-    public static Cid decode(String v) throws IOException {
+    public static Cid decode(String v) {
         if (v.length() < 2)
             throw new IllegalStateException("Cid too short!");
 
@@ -121,22 +144,26 @@ public class Cid {
         return cast(data);
     }
 
-    public static Cid cast(byte[] data) throws IOException {
+    public static Cid cast(byte[] data) {
         if (data.length == 34 && data[0] == 0x18 && data[1] == 32)
             return buildCidV0(new Multihash(data));
 
         InputStream in = new ByteArrayInputStream(data);
-        long version = readVarint(in);
-        if (version != 0 && version != 1)
-            throw new IllegalStateException("Invalid Cif version number: " + version);
+        try {
+            long version = readVarint(in);
+            if (version != 0 && version != 1)
+                throw new CidEncodingException("Invalid Cif version number: " + version);
 
-        long codec = readVarint(in);
-        if (version != 0 && version != 1)
-            throw new IllegalStateException("Invalid Cif version number: " + version);
+            long codec = readVarint(in);
+            if (version != 0 && version != 1)
+                throw new CidEncodingException("Invalid Cif version number: " + version);
 
-        Multihash hash = Multihash.deserialize(new DataInputStream(in));
+            Multihash hash = Multihash.deserialize(new DataInputStream(in));
 
-        return new Cid(version, Codec.lookup(codec), hash);
+            return new Cid(version, Codec.lookup(codec), hash);
+        } catch (IOException e) {
+            throw new CidEncodingException("Invalid cid bytes: " + Stream.of(data).map(b -> String.format("%02x", b)).reduce("", (a, b) -> a + b));
+        }
     }
 
     private static long readVarint(InputStream in) throws IOException {

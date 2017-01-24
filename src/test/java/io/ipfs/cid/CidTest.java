@@ -56,9 +56,7 @@ public class CidTest {
 
         Assert.assertTrue("version 0", cid.version == 0);
 
-        Assert.assertTrue("Correct hash", cid.hash.toString().equals(hashString));
-
-        Assert.assertTrue("Correct toString", cid.toString().equals(hashString));
+        Assert.assertTrue("Correct hash", cid.toString().equals(hashString));
     }
 
     @Test
