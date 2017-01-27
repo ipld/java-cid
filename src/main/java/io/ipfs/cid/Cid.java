@@ -50,7 +50,7 @@ public class Cid extends Multihash {
     public final Codec codec;
 
     public Cid(long version, Codec codec, Multihash hash) {
-        super(hash);
+        super(hash.toBytes());
         this.version = version;
         this.codec = codec;
     }
