@@ -49,7 +49,25 @@
 			<version>${hamcrest.version}</version>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>com.github.multiformats</groupId>
+			<artifactId>java-multibase</artifactId>
+			<version>v1.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.github.multiformats</groupId>
+			<artifactId>java-multihash</artifactId>
+			<version>v1.0.0</version>
+		</dependency>
 	</dependencies>
+
+	<repositories>
+		<repository>
+			<id>jitpack.io</id>
+			<url>https://jitpack.io</url>
+		</repository>
+	</repositories>
+
 
 	<build>
 		<plugins>
