@@ -34,6 +34,9 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<junit.version>4.12</junit.version>
 		<hamcrest.version>1.3</hamcrest.version>
+		<multiaddr.version>1.0.0</multiaddr.version>
+		<multibase.version>1.0.0</multibase.version>
+		<multihash.version>1.1.0</multihash.version>
 	</properties>
 
 	<dependencies>
@@ -48,6 +51,21 @@
 			<artifactId>hamcrest-core</artifactId>
 			<version>${hamcrest.version}</version>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.ipfs</groupId>
+			<artifactId>multiaddr</artifactId>
+			<version>${multiaddr.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.ipfs</groupId>
+			<artifactId>multibase</artifactId>
+			<version>${multibase.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.ipfs</groupId>
+			<artifactId>multihash</artifactId>
+			<version>${multihash.version}</version>
 		</dependency>
 	</dependencies>
 
