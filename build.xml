@@ -1,4 +1,4 @@
-<project name="java-multihash" default="dist" basedir=".">
+<project name="java-cid" default="dist" basedir=".">
   <description>
     Java Content ID
   </description>
@@ -39,8 +39,8 @@
       <manifest>
         <attribute name="Class-Path" value="${manifest_cp}"/>
         <attribute name="Implementation-Vendor" value="io.ipfs"/>
-        <attribute name="Implementation-Title" value="multihash"/>
-        <attribute name="Implementation-Version" value="1.0.0"/>
+        <attribute name="Implementation-Title" value="cid"/>
+        <attribute name="Implementation-Version" value="1.0.1"/>
       </manifest>
     </jar>
   </target>
