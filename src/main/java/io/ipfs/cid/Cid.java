@@ -152,11 +152,11 @@ public class Cid extends Multihash {
         try {
             long version = readVarint(in);
             if (version != 0 && version != 1)
-                throw new CidEncodingException("Invalid Cif version number: " + version);
+                throw new CidEncodingException("Invalid Cid version number: " + version);
 
             long codec = readVarint(in);
             if (version != 0 && version != 1)
-                throw new CidEncodingException("Invalid Cif version number: " + version);
+                throw new CidEncodingException("Invalid Cid version number: " + version);
 
             Multihash hash = Multihash.deserialize(new DataInputStream(in));
 
