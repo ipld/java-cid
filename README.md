@@ -49,7 +49,7 @@ for Maven, you can add the follwing sections to your POM.XML:
     <dependency>
       <groupId>com.github.ipld</groupId>
       <artifactId>java-cid</artifactId>
-      <version>v1.0.1</version>
+      <version>$LATEST_VERSION</version>
     </dependency>
   </dependencies>
 ```
