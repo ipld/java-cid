@@ -146,7 +146,7 @@ public class Cid extends Multihash {
 
     public static Cid cast(byte[] data) {
         if (data.length == 34 && data[0] == 18 && data[1] == 32)
-            return buildCidV0(new Multihash(data));
+            return buildCidV0(new Multihash(Type.sha2_256, Arrays.copyOfRange(data, 2, data.length)));
 
         InputStream in = new ByteArrayInputStream(data);
         try {
@@ -164,25 +164,6 @@ public class Cid extends Multihash {
         } catch (IOException e) {
             throw new CidEncodingException("Invalid cid bytes: " + Stream.of(data).map(b -> String.format("%02x", b)).reduce("", (a, b) -> a + b));
         }
-    }
-
-    private static long readVarint(InputStream in) throws IOException {
-        long x = 0;
-        int s=0;
-        for (int i=0; i < 10; i++) {
-            int b = in.read();
-            if (b == -1)
-                throw new EOFException();
-            if (b < 0x80) {
-                if (i > 9 || i == 9 && b > 1) {
-                    throw new IllegalStateException("Overflow reading varint" +(-(i + 1)));
-                }
-                return x | (((long)b) << s);
-            }
-            x |= ((long)b & 0x7f) << s;
-            s += 7;
-        }
-        throw new IllegalStateException("Varint too long!");
     }
 
     private static int putUvarint(byte[] buf, int index, long x) {
