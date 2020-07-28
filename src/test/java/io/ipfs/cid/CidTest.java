@@ -37,9 +37,8 @@ public class CidTest {
     public void basicMarshalling() throws Exception {
         MessageDigest hasher = MessageDigest.getInstance("SHA-512");
         byte[] hash = hasher.digest("TEST".getBytes());
-        Multihash mhash = new Multihash(Multihash.Type.sha2_512, hash);
 
-        Cid cid = new Cid(1, Cid.Codec.Raw, mhash);
+        Cid cid = new Cid(1, Cid.Codec.Raw, Multihash.Type.sha2_512, hash);
         byte[] data = cid.toBytes();
 
         Cid cast = Cid.cast(data);

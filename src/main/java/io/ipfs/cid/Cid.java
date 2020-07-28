@@ -5,7 +5,6 @@ import io.ipfs.multihash.*;
 
 import java.io.*;
 import java.util.*;
-import java.util.stream.*;
 
 public class Cid extends Multihash {
 
@@ -49,37 +48,33 @@ public class Cid extends Multihash {
     public final long version;
     public final Codec codec;
 
-    public Cid(long version, Codec codec, Multihash hash) {
-        super(hash);
-        this.version = version;
-        this.codec = codec;
-    }
-
     public Cid(long version, Codec codec, Multihash.Type type, byte[] hash) {
         super(type, hash);
         this.version = version;
         this.codec = codec;
     }
 
-    public Cid(Multihash h) {
-        this(0, Codec.DagProtobuf, h);
+    public static Cid build(long version, Codec codec, Multihash h) {
+        return new Cid(version, codec, h.getType(), h.getHash());
     }
 
     private byte[] toBytesV0() {
         return super.toBytes();
     }
 
-    private static final int MAX_VARINT_LEN64 = 10;
-
     private byte[] toBytesV1() {
-        byte[] hashBytes = super.toBytes();
-        byte[] res = new byte[2 * MAX_VARINT_LEN64 + hashBytes.length];
-        int index = putUvarint(res, 0, version);
-        index = putUvarint(res, index, codec.type);
-        System.arraycopy(hashBytes, 0, res, index, hashBytes.length);
-        return Arrays.copyOfRange(res, 0, index + hashBytes.length);
+        try {
+            ByteArrayOutputStream res = new ByteArrayOutputStream();
+            putUvarint(res, version);
+            putUvarint(res, codec.type);
+            super.serialize(res);
+            return res.toByteArray();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
+    @Override
     public byte[] toBytes() {
         if (version == 0)
             return toBytesV0();
@@ -124,8 +119,8 @@ public class Cid extends Multihash {
         return result;
     }
 
-    public static Cid buildCidV0(Multihash h) {
-        return new Cid(h);
+    public static Cid buildV0(Multihash h) {
+        return Cid.build(0, Codec.DagProtobuf, h);
     }
 
     public static Cid buildCidV1(Codec c, Multihash.Type type, byte[] hash) {
@@ -138,7 +133,7 @@ public class Cid extends Multihash {
 
         // support legacy format
         if (v.length() == 46 && v.startsWith("Qm"))
-            return buildCidV0(Multihash.fromBase58(v));
+            return buildV0(Multihash.fromBase58(v));
 
         byte[] data = Multibase.decode(v);
         return cast(data);
@@ -146,7 +141,7 @@ public class Cid extends Multihash {
 
     public static Cid cast(byte[] data) {
         if (data.length == 34 && data[0] == 18 && data[1] == 32)
-            return buildCidV0(new Multihash(data));
+            return buildV0(new Multihash(Type.lookup(data[0] & 0xff), Arrays.copyOfRange(data, 2, data.length)));
 
         InputStream in = new ByteArrayInputStream(data);
         try {
@@ -155,43 +150,30 @@ public class Cid extends Multihash {
                 throw new CidEncodingException("Invalid Cid version number: " + version);
 
             long codec = readVarint(in);
-            if (version != 0 && version != 1)
-                throw new CidEncodingException("Invalid Cid version number: " + version);
+            Multihash hash = Multihash.deserialize(in);
 
-            Multihash hash = Multihash.deserialize(new DataInputStream(in));
-
-            return new Cid(version, Codec.lookup(codec), hash);
-        } catch (IOException e) {
-            throw new CidEncodingException("Invalid cid bytes: " + Stream.of(data).map(b -> String.format("%02x", b)).reduce("", (a, b) -> a + b));
+            return new Cid(version, Codec.lookup(codec), hash.getType(), hash.getHash());
+        } catch (Exception e) {
+            throw new CidEncodingException("Invalid cid bytes: " + bytesToHex(data));
         }
     }
 
-    private static long readVarint(InputStream in) throws IOException {
-        long x = 0;
-        int s=0;
-        for (int i=0; i < 10; i++) {
-            int b = in.read();
-            if (b == -1)
-                throw new EOFException();
-            if (b < 0x80) {
-                if (i > 9 || i == 9 && b > 1) {
-                    throw new IllegalStateException("Overflow reading varint" +(-(i + 1)));
-                }
-                return x | (((long)b) << s);
-            }
-            x |= ((long)b & 0x7f) << s;
-            s += 7;
-        }
-        throw new IllegalStateException("Varint too long!");
+    private static String[] HEX_DIGITS = new String[]{
+            "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f"};
+    private static String[] HEX = new String[256];
+    static {
+        for (int i=0; i < 256; i++)
+            HEX[i] = HEX_DIGITS[(i >> 4) & 0xF] + HEX_DIGITS[i & 0xF];
     }
 
-    private static int putUvarint(byte[] buf, int index, long x) {
-        while (x >= 0x80) {
-            buf[index] = (byte)(x | 0x80);
-            x >>= 7;
-            index++;
-        }
-        buf[index] = (byte)x;
-        return index + 1;
+    private static String byteToHex(byte b) {
+        return HEX[b & 0xFF];
+    }
+
+    private static String bytesToHex(byte[] data) {
+        StringBuilder s = new StringBuilder();
+        for (byte b : data)
+            s.append(byteToHex(b));
+        return s.toString();
     }
 }
