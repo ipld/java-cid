@@ -93,7 +93,7 @@ public class Cid extends Multihash {
         if (version == 0) {
             return super.toString();
         } else if (version == 1) {
-            return Multibase.encode(Multibase.Base.Base58BTC, toBytesV1());
+            return Multibase.encode(Multibase.Base.Base32, toBytesV1());
         }
         throw new IllegalStateException("Unknown Cid version: " + version);
     }
