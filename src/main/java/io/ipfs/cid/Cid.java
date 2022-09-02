@@ -13,6 +13,10 @@ public class Cid extends Multihash {
         public CidEncodingException(String message) {
             super(message);
         }
+        
+        public CidEncodingException(String message, Throwable cause) {
+            super(message, cause);
+        }
     }
 
     public enum Codec {
@@ -154,8 +158,10 @@ public class Cid extends Multihash {
             Multihash hash = Multihash.deserialize(in);
 
             return new Cid(version, Codec.lookup(codec), hash.getType(), hash.getHash());
+        } catch (CidEncodingException cee) {
+            throw cee;
         } catch (Exception e) {
-            throw new CidEncodingException("Invalid cid bytes: " + bytesToHex(data));
+            throw new CidEncodingException("Invalid cid bytes: " + bytesToHex(data), e);
         }
     }
 
