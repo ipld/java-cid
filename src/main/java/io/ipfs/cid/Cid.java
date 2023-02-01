@@ -98,6 +98,7 @@ public class Cid extends Multihash {
         throw new IllegalStateException("Unknown Cid version: " + version);
     }
 
+    @Override
     public Multihash bareMultihash() {
         return new Multihash(getType(), getHash());
     }
