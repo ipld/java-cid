@@ -38,15 +38,32 @@ public class Cid extends Multihash {
         }
 
         private static Map<Long, Codec> lookup = new TreeMap<>();
+        private static Map<String, Codec> nameLookup = new TreeMap<>();
         static {
             for (Codec c: Codec.values())
                 lookup.put(c.type, c);
+            // https://github.com/multiformats/multicodec/blob/master/table.csv
+            nameLookup.put("raw", Raw);
+            nameLookup.put("dag-pb", DagProtobuf);
+            nameLookup.put("dag-cbor", DagCbor);
+            nameLookup.put("libp2p-key", Libp2pKey);
+            nameLookup.put("eth-block", EthereumBlock);
+            nameLookup.put("eth-block-list", EthereumTx);
+            nameLookup.put("bitcoin-block", BitcoinBlock);
+            nameLookup.put("bitcoin-tx", BitcoinTx);
+            nameLookup.put("zcash-block", ZcashBlock);
+            nameLookup.put("zcash-tx", ZcashTx);
         }
 
         public static Codec lookup(long c) {
             if (!lookup.containsKey(c))
                 throw new IllegalStateException("Unknown Codec type: " + c);
             return lookup.get(c);
+        }
+        public static Codec lookupIPLDName(String name) {
+            if (!nameLookup.containsKey(name))
+                throw new IllegalStateException("Unknown Codec type: " + name);
+            return nameLookup.get(name);
         }
     }
 

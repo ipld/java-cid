@@ -66,4 +66,12 @@ public class CidTest {
             throw new RuntimeException();
         } catch (IllegalStateException e) {}
     }
+
+    @Test
+    public void lookByOfficialIPLDName() {
+        Cid.Codec raw = Cid.Codec.lookupIPLDName("raw");
+        Assert.assertTrue("Raw Codec", raw.name().equals("Raw"));
+        Cid.Codec dagcbor = Cid.Codec.lookupIPLDName("dag-cbor");
+        Assert.assertTrue("DagCbor Codec", dagcbor.name().equals("DagCbor"));
+    }
 }
