@@ -20,6 +20,7 @@ public class Cid extends Multihash {
     }
 
     public enum Codec {
+        Cbor(0x51),
         Raw(0x55),
         DagProtobuf(0x70),
         DagCbor(0x71),
@@ -43,6 +44,7 @@ public class Cid extends Multihash {
             for (Codec c: Codec.values())
                 lookup.put(c.type, c);
             // https://github.com/multiformats/multicodec/blob/master/table.csv
+            nameLookup.put("cbor", Raw);
             nameLookup.put("raw", Raw);
             nameLookup.put("dag-pb", DagProtobuf);
             nameLookup.put("dag-cbor", DagCbor);
