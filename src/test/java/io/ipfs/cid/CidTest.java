@@ -1,17 +1,19 @@
 package io.ipfs.cid;
 
 import io.ipfs.multihash.*;
-import org.junit.*;
+import org.junit.jupiter.api.Test;
 import io.ipfs.multibase.*;
 
 import java.io.*;
 import java.security.*;
 import java.util.*;
 
-public class CidTest {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+class CidTest {
 
     @Test
-    public void validStrings() {
+    void validStrings() {
         List<String> examples = Arrays.asList(
                 "QmPZ9gcCEpqKTo6aq61g2nXGUhM4iCL3ewB6LDXZCtioEB",
                 "QmatmE9msSfkKxoffpHwNLNKgwZG8eT9Bud6YoPab52vpy",
@@ -26,7 +28,7 @@ public class CidTest {
     }
 
     @Test
-    public void emptyStringShouldFail() throws IOException {
+    void emptyStringShouldFail() throws IOException {
         try {
             Cid cid = Cid.decode("");
             throw new RuntimeException();
@@ -34,7 +36,7 @@ public class CidTest {
     }
 
     @Test
-    public void basicMarshalling() throws Exception {
+    void basicMarshalling() throws Exception {
         MessageDigest hasher = MessageDigest.getInstance("SHA-512");
         byte[] hash = hasher.digest("TEST".getBytes());
 
@@ -42,24 +44,24 @@ public class CidTest {
         byte[] data = cid.toBytes();
 
         Cid cast = Cid.cast(data);
-        Assert.assertTrue("Invertible serialization", cast.equals(cid));
+        assertEquals(cast, cid, "Invertible serialization");
 
         Cid fromString = Cid.decode(cid.toString());
-        Assert.assertTrue("Invertible toString", fromString.equals(cid));
+        assertEquals(fromString, cid, "Invertible toString");
     }
 
     @Test
-    public void version0Handling() throws Exception {
+    void version0Handling() throws Exception {
         String hashString = "QmPZ9gcCEpqKTo6aq61g2nXGUhM4iCL3ewB6LDXZCtioEB";
         Cid cid = Cid.decode(hashString);
 
-        Assert.assertTrue("version 0", cid.version == 0);
+        assertEquals(0, cid.version, "version 0");
 
-        Assert.assertTrue("Correct hash", cid.toString().equals(hashString));
+        assertEquals(cid.toString(), hashString, "Correct hash");
     }
 
     @Test
-    public void version0Error() throws Exception {
+    void version0Error() throws Exception {
         String invalidString = "QmdfTbBqBPQ7VNxZEYEj14VmRuZBkqFbiwReogJgS1zIII";
         try {
             Cid cid = Cid.decode(invalidString);
@@ -68,10 +70,10 @@ public class CidTest {
     }
 
     @Test
-    public void lookByOfficialIPLDName() {
+    void lookByOfficialIPLDName() {
         Cid.Codec raw = Cid.Codec.lookupIPLDName("raw");
-        Assert.assertTrue("Raw Codec", raw.name().equals("Raw"));
+        assertEquals("Raw", raw.name(), "Raw Codec");
         Cid.Codec dagcbor = Cid.Codec.lookupIPLDName("dag-cbor");
-        Assert.assertTrue("DagCbor Codec", dagcbor.name().equals("DagCbor"));
+        assertEquals("DagCbor", dagcbor.name(), "DagCbor Codec");
     }
 }
