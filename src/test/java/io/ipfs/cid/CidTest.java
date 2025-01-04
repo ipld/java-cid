@@ -1,14 +1,15 @@
 package io.ipfs.cid;
 
-import io.ipfs.multihash.*;
-import org.junit.jupiter.api.Test;
-import io.ipfs.multibase.*;
-
-import java.io.*;
-import java.security.*;
-import java.util.*;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import java.io.IOException;
+import java.security.MessageDigest;
+import java.util.Arrays;
+import java.util.List;
+
+import org.junit.jupiter.api.Test;
+
+import io.ipfs.multihash.Multihash;
 
 class CidTest {
 
@@ -17,9 +18,8 @@ class CidTest {
         List<String> examples = Arrays.asList(
                 "QmPZ9gcCEpqKTo6aq61g2nXGUhM4iCL3ewB6LDXZCtioEB",
                 "QmatmE9msSfkKxoffpHwNLNKgwZG8eT9Bud6YoPab52vpy",
-                "bafyreigivjmlrue5db7rpwmbonv7oq57hvnp7yzhlsoy3fbwi5jzhwgali"
-        );
-        for (String example: examples) {
+                "bafyreigivjmlrue5db7rpwmbonv7oq57hvnp7yzhlsoy3fbwi5jzhwgali");
+        for (String example : examples) {
             Cid cid = Cid.decode(example);
             String encoded = cid.toString();
             if (!encoded.equals(example))
@@ -32,7 +32,8 @@ class CidTest {
         try {
             Cid cid = Cid.decode("");
             throw new RuntimeException();
-        } catch (IllegalStateException e) {}
+        } catch (IllegalStateException e) {
+        }
     }
 
     @Test
@@ -66,7 +67,8 @@ class CidTest {
         try {
             Cid cid = Cid.decode(invalidString);
             throw new RuntimeException();
-        } catch (IllegalStateException e) {}
+        } catch (IllegalStateException e) {
+        }
     }
 
     @Test
