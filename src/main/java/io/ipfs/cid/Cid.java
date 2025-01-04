@@ -1,10 +1,15 @@
 package io.ipfs.cid;
 
-import io.ipfs.multibase.*;
-import io.ipfs.multihash.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Arrays;
+import java.util.Map;
+import java.util.TreeMap;
 
-import java.io.*;
-import java.util.*;
+import io.ipfs.multibase.Multibase;
+import io.ipfs.multihash.Multihash;
 
 public class Cid extends Multihash {
 
@@ -13,7 +18,7 @@ public class Cid extends Multihash {
         public CidEncodingException(String message) {
             super(message);
         }
-        
+
         public CidEncodingException(String message, Throwable cause) {
             super(message, cause);
         }
@@ -41,7 +46,7 @@ public class Cid extends Multihash {
         private static Map<Long, Codec> lookup = new TreeMap<>();
         private static Map<String, Codec> nameLookup = new TreeMap<>();
         static {
-            for (Codec c: Codec.values())
+            for (Codec c : Codec.values())
                 lookup.put(c.type, c);
             // https://github.com/multiformats/multicodec/blob/master/table.csv
             nameLookup.put("cbor", Cbor);
@@ -63,6 +68,7 @@ public class Cid extends Multihash {
                 throw new IllegalStateException("Unknown Codec type: " + c);
             return codec;
         }
+
         public static Codec lookupIPLDName(String name) {
             Codec codec = nameLookup.get(name);
             if (codec == null)
@@ -126,14 +132,18 @@ public class Cid extends Multihash {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (! (o instanceof Multihash)) return false;
-        if (!super.equals(o)) return false;
+        if (this == o)
+            return true;
+        if (!(o instanceof Multihash))
+            return false;
+        if (!super.equals(o))
+            return false;
 
         if (o instanceof Cid) {
             Cid cid = (Cid) o;
 
-            if (version != cid.version) return false;
+            if (version != cid.version)
+                return false;
             return codec == cid.codec;
         }
         // o must be a Multihash
@@ -191,11 +201,11 @@ public class Cid extends Multihash {
         }
     }
 
-    private static String[] HEX_DIGITS = new String[]{
-            "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f"};
+    private static String[] HEX_DIGITS = new String[] {
+            "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f" };
     private static String[] HEX = new String[256];
     static {
-        for (int i=0; i < 256; i++)
+        for (int i = 0; i < 256; i++)
             HEX[i] = HEX_DIGITS[(i >> 4) & 0xF] + HEX_DIGITS[i & 0xF];
     }
 
