@@ -4,7 +4,7 @@
 
 	<groupId>com.github.ipld</groupId>
 	<artifactId>java-cid</artifactId>
-	<version>v1.3.7</version>
+	<version>1.3.9-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>cid</name>
