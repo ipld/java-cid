@@ -13,7 +13,7 @@ public class Cid extends Multihash {
         public CidEncodingException(String message) {
             super(message);
         }
-        
+
         public CidEncodingException(String message, Throwable cause) {
             super(message, cause);
         }
@@ -202,7 +202,7 @@ public class Cid extends Multihash {
     }
 
     private static String bytesToHex(byte[] data) {
-        StringBuilder s = new StringBuilder();
+        StringBuilder s = new StringBuilder(data.length * 2);
         for (byte b : data)
             s.append(byteToHex(b));
         return s.toString();
