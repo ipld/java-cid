@@ -1,5 +1,6 @@
 package io.ipfs.cid;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
@@ -30,16 +31,17 @@ class CidTest {
     @Test
     void emptyStringShouldFail() throws IOException {
         try {
-            Cid cid = Cid.decode("");
+            Cid.decode("");
             throw new RuntimeException();
         } catch (IllegalStateException e) {
+            // Expected!
         }
     }
 
     @Test
     void basicMarshalling() throws Exception {
         MessageDigest hasher = MessageDigest.getInstance("SHA-512");
-        byte[] hash = hasher.digest("TEST".getBytes());
+        byte[] hash = hasher.digest("TEST".getBytes(UTF_8));
 
         Cid cid = new Cid(1, Cid.Codec.Raw, Multihash.Type.sha2_512, hash);
         byte[] data = cid.toBytes();
@@ -65,9 +67,10 @@ class CidTest {
     void version0Error() throws Exception {
         String invalidString = "QmdfTbBqBPQ7VNxZEYEj14VmRuZBkqFbiwReogJgS1zIII";
         try {
-            Cid cid = Cid.decode(invalidString);
+            Cid.decode(invalidString);
             throw new RuntimeException();
         } catch (IllegalStateException e) {
+            // Expected!
         }
     }
 
