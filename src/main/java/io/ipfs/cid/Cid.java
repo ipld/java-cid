@@ -58,14 +58,16 @@ public class Cid extends Multihash {
         }
 
         public static Codec lookup(long c) {
-            if (!lookup.containsKey(c))
+            Codec codec = lookup.get(c);
+            if (codec == null)
                 throw new IllegalStateException("Unknown Codec type: " + c);
-            return lookup.get(c);
+            return codec;
         }
         public static Codec lookupIPLDName(String name) {
-            if (!nameLookup.containsKey(name))
+            Codec codec = nameLookup.get(name);
+            if (codec == null)
                 throw new IllegalStateException("Unknown Codec type: " + name);
-            return nameLookup.get(name);
+            return codec;
         }
     }
 
