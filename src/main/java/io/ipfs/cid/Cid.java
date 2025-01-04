@@ -25,41 +25,34 @@ public class Cid extends Multihash {
     }
 
     public enum Codec {
-        Cbor(0x51),
-        Raw(0x55),
-        DagProtobuf(0x70),
-        DagCbor(0x71),
-        Libp2pKey(0x72),
-        EthereumBlock(0x90),
-        EthereumTx(0x91),
-        BitcoinBlock(0xb0),
-        BitcoinTx(0xb1),
-        ZcashBlock(0xc0),
-        ZcashTx(0xc1);
+        // https://github.com/multiformats/multicodec/blob/master/table.csv
+        Cbor(0x51, "cbor"),
+        Raw(0x55, "raw"),
+        DagProtobuf(0x70, "dag-pb"),
+        DagCbor(0x71, "dag-cbor"),
+        Libp2pKey(0x72, "libp2p-key"),
+        EthereumBlock(0x90, "eth-block"),
+        EthereumTx(0x91, "eth-block-list"),
+        BitcoinBlock(0xb0, "bitcoin-block"),
+        BitcoinTx(0xb1, "bitcoin-tx"),
+        ZcashBlock(0xc0, "zcash-block"),
+        ZcashTx(0xc1, "zcash-tx");
 
-        public long type;
+        public final long type;
+        public final String name;
 
-        Codec(long type) {
+        Codec(long type, String name) {
             this.type = type;
+            this.name = name;
         }
 
         private static Map<Long, Codec> lookup = new TreeMap<>();
         private static Map<String, Codec> nameLookup = new TreeMap<>();
         static {
-            for (Codec c : Codec.values())
+            for (Codec c : Codec.values()) {
                 lookup.put(c.type, c);
-            // https://github.com/multiformats/multicodec/blob/master/table.csv
-            nameLookup.put("cbor", Cbor);
-            nameLookup.put("raw", Raw);
-            nameLookup.put("dag-pb", DagProtobuf);
-            nameLookup.put("dag-cbor", DagCbor);
-            nameLookup.put("libp2p-key", Libp2pKey);
-            nameLookup.put("eth-block", EthereumBlock);
-            nameLookup.put("eth-block-list", EthereumTx);
-            nameLookup.put("bitcoin-block", BitcoinBlock);
-            nameLookup.put("bitcoin-tx", BitcoinTx);
-            nameLookup.put("zcash-block", ZcashBlock);
-            nameLookup.put("zcash-tx", ZcashTx);
+                nameLookup.put(c.name, c);
+            }
         }
 
         public static Codec lookup(long c) {
