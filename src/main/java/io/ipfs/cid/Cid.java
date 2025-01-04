@@ -112,7 +112,7 @@ public class Cid extends Multihash {
             return toBytesV0();
         else if (version == 1)
             return toBytesV1();
-        throw new IllegalStateException("Unknown cid version: " + version);
+        throw new IllegalStateException("Unknown CID version: " + version);
     }
 
     @Override
@@ -122,7 +122,7 @@ public class Cid extends Multihash {
         } else if (version == 1) {
             return Multibase.encode(Multibase.Base.Base32, toBytesV1());
         }
-        throw new IllegalStateException("Unknown Cid version: " + version);
+        throw new IllegalStateException("Unknown CID version: " + version);
     }
 
     @Override
@@ -170,7 +170,7 @@ public class Cid extends Multihash {
 
     public static Cid decode(String v) {
         if (v.length() < 2)
-            throw new IllegalStateException("Cid too short!");
+            throw new IllegalStateException("CID too short: " + v);
 
         // support legacy format
         if (v.length() == 46 && v.startsWith("Qm"))
@@ -188,7 +188,7 @@ public class Cid extends Multihash {
         try {
             long version = readVarint(in);
             if (version != 0 && version != 1)
-                throw new CidEncodingException("Invalid Cid version number: " + version);
+                throw new CidEncodingException("Invalid CID version number: " + version);
 
             long codec = readVarint(in);
             Multihash hash = Multihash.deserialize(in);
@@ -197,7 +197,7 @@ public class Cid extends Multihash {
         } catch (CidEncodingException cee) {
             throw cee;
         } catch (Exception e) {
-            throw new CidEncodingException("Invalid cid bytes: " + bytesToHex(data), e);
+            throw new CidEncodingException("Invalid CID bytes: " + bytesToHex(data), e);
         }
     }
 
