@@ -102,7 +102,7 @@ public class Cid extends Multihash {
             super.serialize(res);
             return res.toByteArray();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new UncheckedIOException(e);
         }
     }
 
