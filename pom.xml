@@ -71,7 +71,7 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.13.0</version>
 				<configuration>
-					<release>11</release>
+					<release>17</release>
 					<encoding>UTF-8</encoding>
 				    <compilerArgs>
                         <arg>-Xlint:-serial,all</arg>
