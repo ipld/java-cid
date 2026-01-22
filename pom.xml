@@ -36,7 +36,7 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <maven.compiler.release>11</maven.compiler.release>
     <version.junit>6.0.2</version.junit>
-    <version.multihash>1.3.7-SNAPSHOT</version.multihash>
+    <version.multihash>1.4.0</version.multihash>
   </properties>
 
   <dependencies>
